@@ -19,7 +19,7 @@ INSTRUCTIONS:
       b   c
 
 2. USAGE:
-   This program can be called in anyway that gives it input from the stdin;
+   This program can be called in any way that gives it input from the stdin;
    however, this method of invoking the application could also be helpful
    
    ./<your program> <optional args> | java Tree
