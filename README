@@ -1,0 +1,28 @@
+This is a tree viewer for displaying binary trees.
+
+INSTRUCTIONS:
+1. The java program reads input from the stdin and is expecting a newline
+   delimeted input from a preorder traversal. NULL nodes are marked by a newline
+   themselves.
+   
+   Example: 1 \n  \n 2 \n \n 3 \n \n \n will give the tree:
+   1
+    \
+     2
+      \
+       3
+
+   and: a \n b \n \n c \n \n \n
+
+   	a
+       / \
+      b   c
+
+2. USAGE:
+   This program can be called in anyway that gives it input from the stdin;
+   however, this method of invoking the application could also be helpful
+   
+   ./<your program> <optional args> | java Tree
+   
+   where <your program> outputs a preorder traversal of a binary tree as
+   explained in 1. 
