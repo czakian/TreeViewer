@@ -20,16 +20,16 @@ public class Tree extends JPanel {
 	Insets insets = getInsets();
         Dimension root_size = root.getPreferredSize();
         midline = insets.left + root_size.width / 2 + 10;
-        highline = insets.top + root_size.height + 10;
-	width = insets.left + insets.right + root_size.width; 
+        highline = insets.top + root_size.height + 12;
+	width = insets.left + insets.right + root_size.width + 30; 
 	height = 0;
 	
         if (left != null) {
 	    Dimension left_size = left.getPreferredSize();
 	    midline = Math.max(midline, insets.left + left_size.width);
 	    left.setBounds(insets.left, highline, 
-			   left_size.width, left_size.height);
-	    width = midline + root_size.width/2; 
+			   left_size.width, left_size.height) ;
+	    width = midline + root_size.width/2 + 30; 
 	    height = Math.max(height,
 			      left.getY() + left.getHeight() + insets.bottom);
 	    add(left);
@@ -46,12 +46,12 @@ public class Tree extends JPanel {
             right.setBounds(midline + 5, highline,
 			    right_size.width, right_size.height);
             width = midline + Math.max(root_size.width/2,
-				       right_size.width+5) + insets.right;
+				       right_size.width+5) + insets.right + 30;
             height = Math.max(height,
 			      right.getY() + right.getHeight() + insets.bottom);
             add(right);
 	}
-	setPreferredSize(new Dimension(width + 30, height + 20));
+	setPreferredSize(new Dimension(width, height));
     }
     
     public static Tree parseTree(BufferedReader in){   
@@ -68,11 +68,10 @@ public class Tree extends JPanel {
 	} else {
 	    Tree left = parseTree(in);
 	    Tree right = parseTree(in);
-	    JLabel node = new JLabel(line);
-	    node.setFont(new Font("Serif", Font.BOLD, 16));
+	    JLabel node = new JLabel(" " + line + " ");
+	    node.setFont(new Font("Serif", Font.ITALIC, 16));
 	    node.setHorizontalTextPosition(JLabel.CENTER);
 	    node.setVerticalTextPosition(JLabel.BOTTOM);
-	    
 	    node.setBorder(new LineBorder(Color.BLACK, 2, true));
 	    return new Tree(node, left, right);
 	}
@@ -83,13 +82,13 @@ public class Tree extends JPanel {
 	Graphics2D g2 = (Graphics2D) g;
 	if (left != null) {
 	    g2.drawLine(left.getX() + left.midline, left.getY(),
-			left.getX() + left.getWidth(),
+			left.getX() -3 + left.getWidth(),
 			root.getY() + root.getHeight());
 	}
 	
 	if (right != null) {
 	    g2.drawLine(right.getX() + right.midline, right.getY(),
-			right.getX(), root.getY() + root.getHeight());
+			right.getX() -3, root.getY() + root.getHeight());
 	}
 	setOpaque(true);
 	setBackground(Color.white);
@@ -106,7 +105,7 @@ public class Tree extends JPanel {
 	scrollPane.getViewport().setBackground(Color.white);
 	scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	scrollPane.setSize(tree.getSize());
+	scrollPane.setPreferredSize(new Dimension(tree.getSize().width + 500, tree.getSize().height + 500));
 	frame.setLayout(new BorderLayout()); //keeps everything centered on resize
 	frame.getContentPane().add(scrollPane);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
