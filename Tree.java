@@ -7,6 +7,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 public class Tree extends JPanel {
+    private static final  String IMPROPER_TREE = "!$&";
     private JComponent root;
     private Tree left, right;
     public int midline, width, height, highline; // TODO: dynamic midline calculation
@@ -56,60 +57,76 @@ public class Tree extends JPanel {
     
     public static Tree parseTree(BufferedReader in){   
 	String line;
+	boolean improperTree = false;
+	Color color = Color.BLACK;
 	try {
 	    line = in.readLine();
+	    if(line.isEmpty()){
+		return null;
+	    } else {
+		if (line.equals(IMPROPER_TREE)) { //this is just a flag. Scheme side does the checking.
+		    improperTree = true;
+		    line = in.readLine();
+		    JOptionPane.showMessageDialog
+			(null, "Improper tree at item: "  + line, "Improper Tree!",  JOptionPane.ERROR_MESSAGE); 
+		}
+		Tree left = parseTree(in);
+		Tree right = parseTree(in);
+		JLabel node = new JLabel(" " + line + " ", JLabel.CENTER);
+		node.setFont(new Font("MONOSPACE", Font.PLAIN, 14));
+		node.setVerticalTextPosition(JLabel.BOTTOM);
+		if(improperTree) {
+		    color = Color.RED;
+		} 
+		node.setBorder(new LineBorder(color, 2, true));
+		node.setForeground(color);
+		return new Tree(node, left, right);
+	    }
 	} catch (IOException e) {
+	    JOptionPane.showMessageDialog
+		(null, "Error in read from stdin", "IO Exception!",  JOptionPane.ERROR_MESSAGE); 
 	    e.printStackTrace();
 	    return null;
-	}
-	
-	if(line.isEmpty()){
-	    return null;
-	} else {
-	    Tree left = parseTree(in);
-	    Tree right = parseTree(in);
-	    JLabel node = new JLabel(" " + line + " ");
-	    node.setFont(new Font("Serif", Font.ITALIC, 16));
-	    node.setHorizontalTextPosition(JLabel.CENTER);
-	    node.setVerticalTextPosition(JLabel.BOTTOM);
-	    node.setBorder(new LineBorder(Color.BLACK, 2, true));
-	    return new Tree(node, left, right);
 	}
     }
     
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);
-	Graphics2D g2 = (Graphics2D) g;
 	if (left != null) {
-	    g2.drawLine(left.getX() + left.midline, left.getY(),
+	    g.drawLine(left.getX() + left.midline, left.getY(),
 			left.getX() -3 + left.getWidth(),
 			root.getY() + root.getHeight());
 	}
 	
 	if (right != null) {
-	    g2.drawLine(right.getX() + right.midline, right.getY(),
+	    g.drawLine(right.getX() + right.midline, right.getY(),
 			right.getX() -3, root.getY() + root.getHeight());
 	}
 	setOpaque(true);
-	setBackground(Color.white);
-	
+	setBackground(Color.WHITE);
     }
     
     public static void main(String[] args) {
 	BufferedReader in =
 	    new BufferedReader(new InputStreamReader(System.in));
 	Tree tree = parseTree(in);
-	JFrame frame = new JFrame("Tree View");
-	JScrollPane scrollPane = new JScrollPane(tree);
-	scrollPane.setOpaque(true);
-	scrollPane.getViewport().setBackground(Color.white);
-	scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-	scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	scrollPane.setPreferredSize(new Dimension(tree.getSize().width + 500, tree.getSize().height + 500));
-	frame.setLayout(new BorderLayout()); //keeps everything centered on resize
-	frame.getContentPane().add(scrollPane);
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.pack();
-	frame.setVisible(true);
+	if(tree != null) {
+	    JFrame frame = new JFrame("Tree View");
+	    JScrollPane scrollPane = new JScrollPane
+		(tree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    scrollPane.setOpaque(true);
+	    scrollPane.getViewport().setBackground(Color.white);
+	    scrollPane.setSize(tree.getSize());
+	    frame.getContentPane().add(scrollPane);
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.pack();
+	    frame.setVisible(true);
+	} else {
+	    JOptionPane.showMessageDialog
+		(null, "Tree exception in read: \n  Expected: Tree \n  Read: Empty-Tree",
+		 "Error!", JOptionPane.ERROR_MESSAGE);
+	    throw new NullPointerException("newline sent in as first input");
+	}
     }
 }
+

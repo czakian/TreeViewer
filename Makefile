@@ -5,7 +5,6 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-	InvalidTreeException.java \
 	Tree.java 	
 
 

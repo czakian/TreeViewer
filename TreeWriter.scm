@@ -1,16 +1,25 @@
 (define display-tree
   (lambda (tr)
-    (let* ([p (process "java -jar /home/czakian/TreeViewer.jar")]
-	   [in (car p)] [out (cadr p)])
+    (let* ([p (process "java -jar TreeViewer.jar")]
+	   [in (car p)] [out (cadr p)][invalid-tree '!$&])
       (let loop ([tr tr])
-	(if (empty-tree? tr)
-	    (write-char #\newline out)
-	    (begin
-	      (write (root-value tr) out)
-	      (write-char #\newline out)
-	      (loop (left-subtree tr))
-	      (loop (right-subtree tr)))))
-      (write-char #\newline out)
-      (flush-output-port out)
-      (close-output-port out)
-      (close-input-port in))))
+	(cond
+          [(empty-tree? tr) (write-char #\newline out)]
+          [(node? tr) ;;then we have a left and a right.
+           (begin
+             (write (root-value tr) out)
+             (write-char #\newline out)
+             (loop (left-subtree tr))
+             (loop (right-subtree tr)))]
+          [else 
+           (begin
+             (write invalid-tree out)
+             (write-char #\newline out)
+             (write tr out)
+             (write-char #\newline out)
+             (write-char #\newline out)
+             (write-char #\newline out))]))
+        (write-char #\newline out)
+        (flush-output-port out)
+        (close-output-port out)
+        (close-input-port in))))
